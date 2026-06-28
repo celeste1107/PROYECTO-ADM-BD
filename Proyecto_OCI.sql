@@ -13,8 +13,6 @@ create table clientes (
     CONSTRAINT pk_clientes
     PRIMARY KEY (id_cliente),
  
-    CONSTRAINT uq_empleados_cedula
-        UNIQUE (cedula)
 );
 
 INSERT INTO clientes VALUES ('C01','Luis','Quesada','8627-4254','luisquesada@gmail.com', 'Urbanización los rosales,Curridabat');
@@ -88,7 +86,9 @@ create table empleados (
     fecha_ingreso DATE,
 
     CONSTRAINT pk_empleados
-    PRIMARY KEY (id_empleado)
+    PRIMARY KEY (id_empleado),
+    CONSTRAINT uq_empleados_cedula
+        UNIQUE (cedula)
  
 );
 
