@@ -1,0 +1,60 @@
+
+--CREACION DE USUARIOS
+CREATE USER admin_constru IDENTIFIED BY "Cuatrimestre22026.";
+GRANT CONNECT TO admin_constru;
+GRANT RESOURCE TO admin_constru;
+ALTER USER admin_constru QUOTA UNLIMITED ON DATA;
+
+
+
+CREATE USER gerente IDENTIFIED BY "Cuatrimestre22026.";
+GRANT CONNECT TO gerente;
+GRANT RESOURCE TO gerente;
+ALTER USER gerente QUOTA UNLIMITED ON DATA;
+
+
+
+CREATE USER operador IDENTIFIED BY "Cuatrimestre22026.";
+GRANT CONNECT TO operador;
+GRANT RESOURCE TO operador;
+ALTER USER operador QUOTA UNLIMITED ON DATA;
+
+--PERFILES
+
+CREATE PROFILE perfil_admin LIMIT
+SESSIONS_PER_USER 5
+IDLE_TIME 60
+CONNECT_TIME UNLIMITED
+FAILED_LOGIN_ATTEMPTS 5;
+
+CREATE PROFILE perfil_gerente LIMIT
+SESSIONS_PER_USER 2
+IDLE_TIME 20
+CONNECT_TIME 300
+FAILED_LOGIN_ATTEMPTS 3;
+
+CREATE PROFILE perfil_operador LIMIT
+SESSIONS_PER_USER 1
+IDLE_TIME 15
+CONNECT_TIME 240
+FAILED_LOGIN_ATTEMPTS 3;
+
+ALTER USER admin_constru PROFILE perfil_admin;
+ALTER USER gerente PROFILE perfil_gerente;
+ALTER USER operador PROFILE perfil_operador;
+
+--CREACION DE ROLES
+CREATE ROLE administrador_role;
+
+CREATE ROLE gerente_role;
+
+CREATE ROLE operador_role;
+
+--ASIGNACION DE ROLES
+
+GRANT administrador_role TO admin_constru;
+
+GRANT gerente_role TO gerente;
+
+GRANT operador_role TO operador;
+

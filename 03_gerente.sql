@@ -1,0 +1,1 @@
+select * from detalle_orden_compra;
