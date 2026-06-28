@@ -977,4 +977,48 @@ INSERT INTO detalle_orden_compra VALUES ('D50',16,22000,352000,'OC50','MT50');
 select * from detalle_orden_compra;
 
 
+------asignación de privilegios---------
+
+---Administrador----
+
+GRANT ALL ON clientes TO administrador_role;
+GRANT ALL ON empleados TO administrador_role;
+GRANT ALL ON proveedores TO administrador_role;
+GRANT ALL ON inventario TO administrador_role;
+GRANT ALL ON proyecto TO administrador_role;
+GRANT ALL ON ordenes_compra TO administrador_role;
+GRANT ALL ON detalle_orden_compra TO administrador_role;
+GRANT ALL ON maquinaria TO administrador_role;
+GRANT ALL ON asignacion_proyecto TO administrador_role;
+GRANT ALL ON asignacion_maquinaria TO administrador_role;
+GRANT ALL ON control_combustible TO administrador_role;
+
+
+----Gerente----
+
+GRANT SELECT ON clientes TO gerente_role;
+GRANT SELECT ON empleados TO gerente_role;
+GRANT SELECT ON proveedores TO gerente_role;
+GRANT SELECT ON inventario TO gerente_role;
+GRANT SELECT ON proyecto TO gerente_role;
+GRANT SELECT ON ordenes_compra TO gerente_role;
+GRANT SELECT ON detalle_orden_compra TO gerente_role;
+GRANT SELECT ON maquinaria TO gerente_role;
+GRANT SELECT ON asignacion_proyecto TO gerente_role;
+GRANT SELECT ON asignacion_maquinaria TO gerente_role;
+GRANT SELECT ON control_combustible TO gerente_role;
+
+----Operador----
+
+GRANT SELECT ON clientes TO operador_role;
+GRANT SELECT ON empleados TO operador_role;
+GRANT SELECT ON proveedores TO operador_role;
+GRANT SELECT, UPDATE ON inventario TO operador_role;
+GRANT SELECT ON proyecto TO operador_role;
+GRANT SELECT ON ordenes_compra TO operador_role;
+GRANT SELECT, INSERT, UPDATE ON maquinaria TO operador_role;
+GRANT SELECT, INSERT, UPDATE ON control_combustible TO operador_role;
+GRANT SELECT ON asignacion_proyecto TO operador_role;
+
+
 
