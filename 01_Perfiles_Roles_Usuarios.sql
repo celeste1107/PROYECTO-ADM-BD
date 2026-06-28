@@ -58,3 +58,17 @@ GRANT gerente_role TO gerente;
 
 GRANT operador_role TO operador;
 
+ ---Creación de Sinónimos públicos para las tablas------
+
+CREATE PUBLIC SYNONYM clientes FOR Proyecto.clientes;
+CREATE PUBLIC SYNONYM empleados FOR Proyecto.empleados;
+CREATE PUBLIC SYNONYM proveedores FOR Proyecto.proveedores;
+CREATE PUBLIC SYNONYM inventario FOR Proyecto.inventario;
+CREATE PUBLIC SYNONYM proyecto FOR Proyecto.proyecto;
+CREATE PUBLIC SYNONYM ordenes_compra FOR Proyecto.ordenes_compra;
+CREATE PUBLIC SYNONYM maquinaria FOR Proyecto.maquinaria;
+CREATE PUBLIC SYNONYM asignacion_proyecto FOR Proyecto.asignacion_proyecto;
+CREATE PUBLIC SYNONYM asignacion_maquinaria FOR Proyecto.asignacion_maquinaria;
+CREATE PUBLIC SYNONYM control_combustible FOR Proyecto.control_combustible;
+CREATE PUBLIC SYNONYM detalle_orden_compra FOR Proyecto.detalle_orden_compra;
+
