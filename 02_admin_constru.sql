@@ -977,6 +977,7 @@ select * from detalle_orden_compra;
 
 --PERMISOS
 
+--ADMINISTRADOR
 
 GRANT ALL ON clientes TO administrador_role;
 GRANT ALL ON empleados TO administrador_role;
@@ -984,26 +985,40 @@ GRANT ALL ON proveedores TO administrador_role;
 GRANT ALL ON inventario TO administrador_role;
 GRANT ALL ON proyecto TO administrador_role;
 GRANT ALL ON ordenes_compra TO administrador_role;
+GRANT ALL ON detalle_orden_compra TO administrador_role;
 GRANT ALL ON maquinaria TO administrador_role;
 GRANT ALL ON asignacion_proyecto TO administrador_role;
+GRANT ALL ON asignacion_maquinaria TO administrador_role;
+GRANT ALL ON control_combustible TO administrador_role;
+
+--GERENTE
+
+GRANT SELECT, UPDATE ON clientes TO gerente_role;
+GRANT SELECT, UPDATE ON empleados TO gerente_role;
+GRANT SELECT, UPDATE ON proveedores TO gerente_role;
+GRANT SELECT, UPDATE ON inventario TO gerente_role;
+GRANT SELECT, UPDATE ON proyecto TO gerente_role;
+GRANT SELECT, UPDATE ON ordenes_compra TO gerente_role;
+GRANT SELECT, UPDATE ON detalle_orden_compra TO gerente_role;
+GRANT SELECT, UPDATE ON maquinaria TO gerente_role;
+GRANT SELECT, UPDATE ON asignacion_proyecto TO gerente_role;
+GRANT SELECT, UPDATE ON asignacion_maquinaria TO gerente_role;
+GRANT SELECT, UPDATE ON control_combustible TO gerente_role;
 
 
-GRANT SELECT ON clientes TO gerente_role;
-GRANT SELECT ON empleados TO gerente_role;
-GRANT SELECT ON proveedores TO gerente_role;
-GRANT SELECT ON inventario TO gerente_role;
-GRANT SELECT ON proyecto TO gerente_role;
-GRANT SELECT ON ordenes_compra TO gerente_role;
-GRANT SELECT ON maquinaria TO gerente_role;
-GRANT SELECT ON asignacion_proyecto TO gerente_role;
+ --OPERADOR
 
+-- Tablas de trabajo diario
+GRANT SELECT, INSERT ON maquinaria TO operador_role;
+GRANT SELECT, INSERT ON inventario TO operador_role;
+GRANT SELECT, INSERT ON control_combustible TO operador_role;
 
-
-GRANT SELECT, INSERT, UPDATE ON clientes TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON empleados TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON proveedores TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON inventario TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON proyecto TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON ordenes_compra TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON maquinaria TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON asignacion_proyecto TO operador_role;
+-- Tablas solo de consulta
+GRANT SELECT ON clientes TO operador_role;
+GRANT SELECT ON empleados TO operador_role;
+GRANT SELECT ON proveedores TO operador_role;
+GRANT SELECT ON proyecto TO operador_role;
+GRANT SELECT ON ordenes_compra TO operador_role;
+GRANT SELECT ON detalle_orden_compra TO operador_role;
+GRANT SELECT ON asignacion_proyecto TO operador_role;
+GRANT SELECT ON asignacion_maquinaria TO operador_role;
