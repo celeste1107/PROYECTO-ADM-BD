@@ -1010,15 +1010,244 @@ GRANT SELECT ON control_combustible TO gerente_role;
 
 ----Operador----
 
+-- Tablas de trabajo diario
+GRANT SELECT, INSERT ON maquinaria TO operador_role;
+GRANT SELECT, INSERT ON inventario TO operador_role;
+GRANT SELECT, INSERT ON control_combustible TO operador_role;
+
+-- Tablas solo de consulta
 GRANT SELECT ON clientes TO operador_role;
 GRANT SELECT ON empleados TO operador_role;
 GRANT SELECT ON proveedores TO operador_role;
-GRANT SELECT, UPDATE ON inventario TO operador_role;
 GRANT SELECT ON proyecto TO operador_role;
 GRANT SELECT ON ordenes_compra TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON maquinaria TO operador_role;
-GRANT SELECT, INSERT, UPDATE ON control_combustible TO operador_role;
+GRANT SELECT ON detalle_orden_compra TO operador_role;
 GRANT SELECT ON asignacion_proyecto TO operador_role;
+GRANT SELECT ON asignacion_maquinaria TO operador_role;
+
+
+---- Monitoreo de consumo de CPU -----
+
+
+-- vista de 
+
+/*DESC  V$SQL*/
+
+
+--- consumo CPU ---
+
+SELECT 
+  CPU_TIME / 1000000 AS cpu_time_seconds,
+  ELAPSED_TIME / 1000000 AS elapsed_time_seconds,
+   sql_text
+FROM 
+  V$SQL_MONITOR
+  where sql_text like ('%Proyecto%')
+order by cpu_time_seconds desc
+
+
+
+------------------------- Seguridad  -----------------------------------
+
+
+-- se crea funcion para encriptar texto--
+
+
+CREATE OR REPLACE FUNCTION encriptar_texto_Proyecto (p_text VARCHAR2)
+RETURN RAW IS l_key RAW(32) := UTL_I18N.STRING_TO_RAW('mi_clave_secreta', 'AL32UTF8');
+BEGIN
+RETURN DBMS_CRYPTO.ENCRYPT( UTL_I18N.STRING_TO_RAW(p_text, 'AL32UTF8'), DBMS_CRYPTO.AES_CBC_PKCS5,
+l_key
+); 
+END;
+
+
+-- se crea funcion para desencriptar texto--
+
+CREATE OR REPLACE FUNCTION desencriptar_texto_Proyecto (p_encrypted RAW) RETURN VARCHAR2 IS
+l_key RAW(32) := UTL_I18N.STRING_TO_RAW('mi_clave_secreta', 'AL32UTF8'); l_raw VARCHAR2(32767);
+BEGIN
+l_raw := DBMS_CRYPTO.DECRYPT(
+p_encrypted, DBMS_CRYPTO.AES_CBC_PKCS5,
+l_key
+);
+RETURN UTL_I18N.RAW_TO_CHAR(l_raw, 'AL32UTF8'); 
+END;
+
+
+/* Datos encriptados por tabla :
+
+Tabla clientes (nombre,apellido, telefono, correo, direccion).
+Tabla empleados (cedula).
+Tabla proveedores (telefono y correo).
+*/
+
+
+--- Update para llamar la funcion  y encriptar los datos mencionados----
+
+
+-------- 1. Tabla clientes -------------------
+
+UPDATE clientes
+SET nombre = encriptar_texto_Proyecto (nombre);
+
+UPDATE clientes
+SET apellido = encriptar_texto_Proyecto (apellido);
+
+UPDATE clientes
+SET telefono = encriptar_texto_Proyecto (telefono);
+
+UPDATE clientes
+SET correo = encriptar_texto_Proyecto (correo);
+
+UPDATE clientes
+SET direccion = encriptar_texto_Proyecto (direccion);
+
+COMMIT;
+
+
+--- confirmar datos encriptados ---
+
+select * from clientes;
+
+
+--------------------- 2. Tabla empleados --------------------
+
+UPDATE empleados
+SET cedula = encriptar_texto_Proyecto (cedula);
+
+COMMIT;
+
+
+--- confirmar datos encriptados ---
+
+select * from empleados;
+
+
+
+------------------- 3. Tabla proveedores -----------------------
+
+UPDATE proveedores
+SET telefono = encriptar_texto_Proyecto (telefono);
+
+UPDATE proveedores
+SET correo = encriptar_texto_Proyecto (correo);
+
+COMMIT;
+
+
+--- confirmar datos encriptados ---
+
+select * from proveedores;
+
+
+
+--- Se crean vistas encriptadas y vistas desencriptadas para q cada usuario segun su perfil acceda---
+
+
+---- 1. vista encriptada tabla clientes ----
+
+CREATE VIEW clientes_S AS
+SELECT * FROM clientes;
+
+--- visualización de la vista segura de tabla clientes ---
+
+SELECT * FROM clientes_S;
+
+
+-- vista desencriptada tabla clientes --
+
+
+CREATE VIEW clientes_F AS 
+SELECT id_cliente, desencriptar_texto_Proyecto(nombre)as nombre, 
+desencriptar_texto_Proyecto(apellido) as apellido,
+desencriptar_texto_Proyecto(telefono) as telefono,
+desencriptar_texto_Proyecto(correo) as correo,
+desencriptar_texto_Proyecto(direccion) as direccion
+FROM clientes;
+
+
+--- visualización de la vista en texto plano de tabla clientes ---
+
+SELECT * FROM clientes_F;
+
+
+---- 2. vista encriptada tabla empleados ----
+
+CREATE VIEW empleados_S AS
+SELECT * FROM empleados;
+
+--- visualización de la vista segura de tabla empleados ---
+
+SELECT * FROM empleados_S;
+
+
+-- vista desencriptada tabla empleados --
+
+
+CREATE VIEW empleados_F AS 
+SELECT id_empleado,nombre, apellido, desencriptar_texto_Proyecto(cedula)as cedula,
+telefono,cargo,fecha_ingreso
+FROM empleados;
+
+
+--- visualización de la vista en texto plano de tabla empleados ---
+
+SELECT * FROM empleados_F;
+
+
+
+---- 3. vista encriptada tabla proveedores ----
+
+CREATE VIEW proveedores_S AS
+SELECT * FROM proveedores;
+
+--- visualización de la vista segura de tabla proveedores ---
+
+SELECT * FROM proveedores_S;
+
+
+-- vista desencriptada tabla proveedores --
+
+
+CREATE VIEW proveedores_F AS 
+SELECT id_proveedor, nombre, desencriptar_texto_Proyecto(telefono)as telefono, 
+desencriptar_texto_Proyecto(correo) as correo,direccion
+FROM proveedores;
+
+
+--- visualización de la vista en texto plano de tabla clientes ---
+
+SELECT * FROM proveedores_F;
+
+
+
+
+
+/*Otorgar privilegio de acceso a las vistas encriptadas y 
+no encriptadas segun el rol de cada usuario */
+
+
+-----  vistas encriptadas acceso a usuario operador  ----
+
+   GRANT SELECT ON clientes_S TO operador;
+   GRANT SELECT ON empleados_S TO operador;
+   GRANT SELECT ON proveedores_S TO operador;
+
+
+--- privilegio de acceso a vistas desencriptadas a usuarios gerente y admin_constru  --
+
+   GRANT SELECT ON clientes_F TO gerente;
+   GRANT SELECT ON empleados_F TO gerente;
+   GRANT SELECT ON proveedores_F TO gerente;
+
+   GRANT SELECT ON clientes_F TO admin_constru;
+   GRANT SELECT ON empleados_F TO admin_constru;
+   GRANT SELECT ON proveedores_F TO admin_constru;
+
+
+
+--- se crean sinonimos publicos de las vistas en oracle_OCI---
 
 
 
