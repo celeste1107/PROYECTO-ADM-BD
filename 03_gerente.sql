@@ -23,3 +23,11 @@ select *from asignacion_maquinaria;
 select *from control_combustible;
 
 select * from detalle_orden_compra;
+
+
+---- Consulta vistas desencriptadas ------
+
+
+SELECT * FROM clientes_F;
+SELECT * FROM empleados_F;
+SELECT * FROM proveedores_F;
