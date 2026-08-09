@@ -68,6 +68,9 @@ CREATE PUBLIC SYNONYM proyecto FOR Proyecto.proyecto;
 CREATE PUBLIC SYNONYM ordenes_compra FOR Proyecto.ordenes_compra;
 CREATE PUBLIC SYNONYM maquinaria FOR Proyecto.maquinaria;
 CREATE PUBLIC SYNONYM asignacion_proyecto FOR Proyecto.asignacion_proyecto;
+CREATE PUBLIC SYNONYM asignacion_maquinaria FOR Proyecto.asignacion_maquinaria;
+CREATE PUBLIC SYNONYM control_combustible FOR Proyecto.control_combustible;
+CREATE PUBLIC SYNONYM detalle_orden_compra FOR Proyecto.detalle_orden_compra;
 
 
 
@@ -147,7 +150,4 @@ AUDIT POLICY politica_uso_cifrado BY operador, gerente, admin_constru;
 
 
 
-CREATE PUBLIC SYNONYM asignacion_maquinaria FOR Proyecto.asignacion_maquinaria;
-CREATE PUBLIC SYNONYM control_combustible FOR Proyecto.control_combustible;
-CREATE PUBLIC SYNONYM detalle_orden_compra FOR Proyecto.detalle_orden_compra;
 
