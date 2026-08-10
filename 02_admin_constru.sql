@@ -152,3 +152,25 @@ WHERE id_asig_maquinaria='AM81';
 
 DELETE FROM control_combustible
 WHERE id_control_combustible='CC51';
+
+-- Crear la vista materializada 
+
+CREATE MATERIALIZED VIEW MV_REPORTE_MAQUINARIA_PROYECTO
+BUILD IMMEDIATE
+REFRESH COMPLETE ON DEMAND
+AS
+SELECT 
+    m.id_maquinaria,
+    m.tipo,
+    m.placa,
+    p.nombre_proyecto,
+    p.ubicacion,
+    am.fecha_inicio,
+    am.horas_uso
+FROM Proyecto.maquinaria m
+JOIN Proyecto.asignacion_maquinaria am ON m.id_maquinaria = am.id_maquinaria
+JOIN Proyecto.proyecto p ON am.id_proyecto = p.id_proyecto;
+
+-- Ejecutar paraactualizar los datos de la vista después de nuevos registros en las tablas base
+
+EXEC DBMS_MVIEW.REFRESH('MV_REPORTE_MAQUINARIA_PROYECTO', 'C');
