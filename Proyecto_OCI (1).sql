@@ -974,7 +974,11 @@ INSERT INTO detalle_orden_compra VALUES ('D50',16,22000,352000,'OC50','MT50');
 select * from detalle_orden_compra;
 
 
-------asignación de privilegios---------
+
+
+
+--------------  1. Administración de usuarios  ------------------
+
 
 ---Administrador----
 
@@ -1044,7 +1048,7 @@ order by cpu_time_seconds desc
 
 
 
-------------------------- Seguridad  -----------------------------------
+------------------------- 2. Seguridad  -----------------------------------
 
 
 -- se crea funcion para encriptar texto--
@@ -1242,9 +1246,14 @@ no encriptadas segun el rol de cada usuario */
    GRANT SELECT ON empleados_F TO admin_constru;
    GRANT SELECT ON proveedores_F TO admin_constru;
 
-
-
 --- se crean sinonimos publicos de las vistas en oracle_OCI---
+
+
+
+
+-------------  3. Gestión administrativa ----------------------
+
+
 
 /*Otorgar privilegio para vistas materializadas */
 
@@ -1308,3 +1317,39 @@ SELECT COUNT(*) FROM control_combustible_HIST;
 
 -- Verificar que la tabla principal no tiene datos mayores a 30 días
 SELECT COUNT(*) FROM control_combustible WHERE fecha < SYSDATE - 30;
+
+
+
+
+
+-------------  4. Monitoreo y optimización ----------------------
+
+
+
+/*Creación de indices para todas las claves foráneas para acelerar
+todas las consultas que utilizan JOIN entre tablas y evitar escaneos 
+completos de las tablas al realizar consultas */
+
+
+CREATE INDEX idx_proyecto_cliente ON proyecto(id_cliente);
+CREATE INDEX idx_orden_proveedor ON ordenes_compra(id_proveedor);
+CREATE INDEX idx_asig_empleado ON asignacion_proyecto(id_empleado);
+CREATE INDEX idx_asig_proyecto ON asignacion_proyecto(id_proyecto);
+CREATE INDEX idx_asig_maq_maquinaria ON asignacion_maquinaria(id_maquinaria);
+CREATE INDEX idx_asig_maq_proyecto ON asignacion_maquinaria(id_proyecto);
+CREATE INDEX idx_comb_maquinaria ON control_combustible(id_maquinaria);
+CREATE INDEX idx_comb_proyecto ON control_combustible(id_proyecto);
+CREATE INDEX idx_detalle_orden ON detalle_orden_compra(id_orden_compra);
+CREATE INDEX idx_detalle_material ON detalle_orden_compra(id_material);
+
+
+
+/*  Creación de indices para busquedas frecuentes para acelerar 
+busquedas por medio de filtros */
+
+
+CREATE INDEX idx_proyecto_estado ON proyecto(estado);
+CREATE INDEX idx_proyecto_fecha ON proyecto(fecha_inicio, fecha_fin);
+CREATE INDEX idx_orden_estado ON ordenes_compra(estado);
+CREATE INDEX idx_inventario_categoria ON inventario(categoria);
+CREATE INDEX idx_combustible_fecha ON control_combustible(fecha);
