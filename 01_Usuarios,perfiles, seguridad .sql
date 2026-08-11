@@ -74,7 +74,7 @@ CREATE PUBLIC SYNONYM detalle_orden_compra FOR Proyecto.detalle_orden_compra;
 
 
 
--------------------------------- Seguridad ------------------------------------------------
+-------------------------------- 2. Seguridad ------------------------------------------------
 
 
 GRANT EXECUTE ON DBMS_CRYPTO TO Proyecto;
