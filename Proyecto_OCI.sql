@@ -5,11 +5,11 @@
 
 create table clientes (
     id_cliente VARCHAR2(5) NOT NULL,
-    nombre VARCHAR2(50) ,
-    apellido VARCHAR2(50) ,
-    telefono VARCHAR2(50),
-    correo VARCHAR2(50),
-    direccion VARCHAR2(50),
+    nombre VARCHAR2(400) ,
+    apellido VARCHAR2(400) ,
+    telefono VARCHAR2(400),
+    correo VARCHAR2(400),
+    direccion VARCHAR2(400),
     CONSTRAINT pk_clientes
     PRIMARY KEY (id_cliente),
  
@@ -80,7 +80,7 @@ create table empleados (
     id_empleado VARCHAR2(5) NOT NULL,
     nombre VARCHAR2(50) NOT NULL,
     apellido VARCHAR2(50) ,
-    cedula VARCHAR2(50) NOT NULL,
+    cedula VARCHAR2(400) NOT NULL,
     telefono VARCHAR2(50),
     cargo VARCHAR2(50),
     fecha_ingreso DATE,
@@ -156,8 +156,8 @@ select * from empleados;
 create table proveedores (
     id_proveedor VARCHAR2(5) NOT NULL,
     nombre VARCHAR2(50) NOT NULL,
-    telefono VARCHAR2(50),
-    correo VARCHAR2(50),
+    telefono VARCHAR2(400),
+    correo VARCHAR2(400),
     direccion VARCHAR2(50),
 
     CONSTRAINT pk_proveedores
