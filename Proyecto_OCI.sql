@@ -1250,4 +1250,69 @@ no encriptadas segun el rol de cada usuario */
 --- se crean sinonimos publicos de las vistas en oracle_OCI---
 
 
+---------------------------------------------------------------------------------------------
+
+
+/*Otorgar privilegio para vistas materializadas */
+
+GRANT CREATE MATERIALIZED VIEW TO admin_constru;
+
+--Respaldo automatico
+-- 1.Crear tabla histórica basada en control_combustible
+CREATE TABLE control_combustible_HIST (
+    id_control_combustible VARCHAR2(5),
+    fecha DATE,
+    cantidad_litros NUMBER(10,2),
+    costo NUMBER(10,2),
+    odometro NUMBER(10),
+    id_maquinaria VARCHAR2(5),
+    id_proyecto VARCHAR2(5),
+    fecha_respaldo DATE DEFAULT SYSDATE -- Columna adicional para control
+);
+
+CREATE OR REPLACE PROCEDURE SP_MOVER_HISTORICO_COMBUSTIBLE AS
+BEGIN
+    -- 2. Insertar en el histórico registros de hace más de 30 días
+    INSERT INTO control_combustible_HIST
+    SELECT id_control_combustible, fecha, cantidad_litros, costo, odometro, id_maquinaria, id_proyecto, SYSDATE
+    FROM control_combustible
+    WHERE fecha < SYSDATE - 30;
+
+    -- 3. Eliminar de la tabla principal los registros ya respaldados
+    DELETE FROM control_combustible
+    WHERE fecha < SYSDATE - 30;
+
+    COMMIT;
+END;
+
+--4. Ejecutar para programar la automatizacion
+BEGIN
+    DBMS_SCHEDULER.CREATE_JOB (
+        job_name        => 'JOB_BACKUP_HISTORICO',
+        job_type        => 'PLSQL_BLOCK',
+        job_action      => 'BEGIN Proyecto.SP_MOVER_HISTORICO_COMBUSTIBLE; END;',
+        start_date      => SYSTIMESTAMP,
+        repeat_interval => 'FREQ=WEEKLY; BYDAY=SUN; BYHOUR=0', 
+        enabled         => TRUE,
+        comments        => 'Mueve datos viejos de combustible a histórico semanalmente'
+    );
+END;
+/
+
+-- Verificación del Respaldo Automático (Job del Scheduler)
+
+SELECT job_name, 
+       state, 
+       last_start_date, 
+       last_run_duration, 
+       next_run_date 
+FROM USER_SCHEDULER_JOBS 
+WHERE job_name = 'JOB_BACKUP_HISTORICO';
+
+-- Validación de la Limpieza de Datos (Histórico)
+-- Verificar que hay datos en el histórico
+SELECT COUNT(*) FROM control_combustible_HIST;
+
+-- Verificar que la tabla principal no tiene datos mayores a 30 días
+SELECT COUNT(*) FROM control_combustible WHERE fecha < SYSDATE - 30;
 
