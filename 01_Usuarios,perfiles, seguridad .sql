@@ -148,6 +148,17 @@ AUDIT POLICY politica_uso_cifrado BY operador, gerente, admin_constru;
 
 
 
+-------------  3. Gestión administrativa ----------------------
+
+
+/*Otorgar privilegio para crear vistas materializadas */
+
+GRANT CREATE MATERIALIZED VIEW TO Proyecto;
+
+
+
+
+
 
 
 
