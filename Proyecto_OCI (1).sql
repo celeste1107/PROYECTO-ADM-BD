@@ -1353,3 +1353,14 @@ CREATE INDEX idx_proyecto_fecha ON proyecto(fecha_inicio, fecha_fin);
 CREATE INDEX idx_orden_estado ON ordenes_compra(estado);
 CREATE INDEX idx_inventario_categoria ON inventario(categoria);
 CREATE INDEX idx_combustible_fecha ON control_combustible(fecha);
+
+
+------ EXPLAIN PLAN — evidencia de rendimiento ------
+
+
+EXPLAIN PLAN FOR
+SELECT * 
+FROM proyecto
+WHERE estado = 'ACTIVO';
+
+SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY());
