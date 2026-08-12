@@ -1,0 +1,55 @@
+1. Monitoreo de Disponibilidad (Sesiones y Bloqueos)
+Este script permite identificar quién está conectado, qué sesiones están activas y detectar posibles bloqueos que afecten la disponibilidad del sistema
+.
+-- Ejecutar como usuario ADMIN / OCI
+-- Identificar sesiones activas y tiempo de inactividad
+SELECT sid, 
+       serial#, 
+       status, 
+       username, 
+       schemaname, 
+       osuser, 
+       last_call_et / 60 AS minutos_activa 
+FROM V$SESSION 
+WHERE username IS NOT NULL 
+  AND status = 'ACTIVE';
+
+-- Identificar objetos bloqueados y el usuario que provoca el bloqueo
+SELECT b.owner, 
+       b.object_name, 
+       a.session_id, 
+       a.locked_mode, 
+       c.username AS usuario_bloqueador
+FROM V$LOCKED_OBJECT a 
+JOIN DBA_OBJECTS b ON a.object_id = b.object_id
+JOIN V$SESSION c ON a.session_id = c.sid;
+
+
+2. Monitoreo de Capacidad (Espacio en Disco)
+Este script permite monitorear el crecimiento de tus tablas y el estado de los tablespaces Para evitar que el sistema se detenga por falta de espacio.
+
+-- Ver tamaño físico de las tablas del proyecto (en MB)
+SELECT segment_name AS tabla, 
+       segment_type, 
+       bytes / 1024 / 1024 AS tamaño_mb 
+FROM USER_SEGMENTS 
+WHERE segment_type = 'TABLE'
+ORDER BY bytes DESC;
+
+-- Monitorear espacio libre en los Tablespaces (Requiere permisos de ADMIN)
+SELECT tablespace_name, 
+       SUM(bytes) / 1024 / 1024 AS espacio_libre_mb 
+FROM DBA_FREE_SPACE 
+GROUP BY tablespace_name;
+
+
+3. Monitoreo de Desempeño Adicional (Eventos de Espera)
+Este script complementa V$SQL_MONITOR para detectar cuellos de botella estructurales
+.
+-- Identificar eventos del sistema que consumen más recursos
+SELECT event, 
+       total_waits, 
+       time_waited / 100 AS segundos_espera 
+FROM V$SYSTEM_EVENT 
+WHERE wait_class <> 'Idle' 
+ORDER BY time_waited DESC;
