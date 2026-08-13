@@ -1026,6 +1026,9 @@ GRANT SELECT ON detalle_orden_compra TO operador_role;
 GRANT SELECT ON asignacion_proyecto TO operador_role;
 GRANT SELECT ON asignacion_maquinaria TO operador_role;
 
+----  prueba bloqueo ------
+GRANT UPDATE ON maquinaria TO operador_role;
+
 
 ---- Monitoreo de consumo de CPU -----
 
