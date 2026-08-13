@@ -1,6 +1,5 @@
-1. Monitoreo de Disponibilidad (Sesiones y Bloqueos)
-Este script permite identificar quién está conectado, qué sesiones están activas y detectar posibles bloqueos que afecten la disponibilidad del sistema
-.
+--1. Monitoreo de Disponibilidad (Sesiones y Bloqueos)
+--Este script permite identificar quién está conectado, qué sesiones están activas y detectar posibles bloqueos que afecten la disponibilidad del sistema.
 -- Ejecutar como usuario ADMIN / OCI
 -- Identificar sesiones activas y tiempo de inactividad
 SELECT sid, 
@@ -25,8 +24,8 @@ JOIN DBA_OBJECTS b ON a.object_id = b.object_id
 JOIN V$SESSION c ON a.session_id = c.sid;
 
 
-2. Monitoreo de Capacidad (Espacio en Disco)
-Este script permite monitorear el crecimiento de tus tablas y el estado de los tablespaces Para evitar que el sistema se detenga por falta de espacio.
+--2. Monitoreo de Capacidad (Espacio en Disco)
+--Este script permite monitorear el crecimiento de tus tablas y el estado de los tablespaces Para evitar que el sistema se detenga por falta de espacio.
 
 -- Ver tamaño físico de las tablas del proyecto (en MB)
 SELECT segment_name AS tabla, 
@@ -43,9 +42,9 @@ FROM DBA_FREE_SPACE
 GROUP BY tablespace_name;
 
 
-3. Monitoreo de Desempeño Adicional (Eventos de Espera)
-Este script complementa V$SQL_MONITOR para detectar cuellos de botella estructurales
-.
+--3. Monitoreo de Desempeño Adicional (Eventos de Espera)
+--Este script complementa V$SQL_MONITOR para detectar cuellos de botella estructurales.
+
 -- Identificar eventos del sistema que consumen más recursos
 SELECT event, 
        total_waits, 
